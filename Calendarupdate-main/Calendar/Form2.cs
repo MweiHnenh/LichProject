@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
-
 
 namespace Calendar
 {
@@ -11,26 +11,30 @@ namespace Calendar
         Forest = 2,
         Ocean = 3
     }
-    public partial class Form2 : Form
+
+    public partial class Form2 : Form, IEventContainer
     {
         int month, year;
-        //create a static variable that we can pass to another form for month and year
         public static int static_month, static_year;
-
-        //defaut theme
+        //default theme
         private ThemeEnum currentTheme = ThemeEnum.Ocean;
+        private bool userSelectedTheme = false;
+
         public Form2()
         {
             InitializeComponent();
+            // Wire up the btnToday_Click method to the Click event of the button
+            btnToday.Click += new EventHandler(this.btnToday_Click);
+
+            DisplayCalendar(DateTime.Now.Month, DateTime.Now.Year);
         }
+
         private void label1_Click(object sender, EventArgs e)
         {
-
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -53,14 +57,11 @@ namespace Calendar
 
         }
 
-        public static DayOfWeek DesiredDayOfWeek = DateTime.Today.DayOfWeek;
-
-        //close
         private void button3_Click_1(object sender, EventArgs e)
         {
             Close();
         }
-        //property for display-button
+        //Property for display button
         void display_all(int pre_next)
         {
             dayContainer.Controls.Clear();
@@ -87,13 +88,12 @@ namespace Calendar
                 year--;
             }
 
-            static_month = month;//convert string to int
-            static_year = year;//convert string to int
-            String monthname = DateTimeFormatInfo.CurrentInfo.GetMonthName(month);
+            static_month = month;
+            static_year = year;
+            string monthname = DateTimeFormatInfo.CurrentInfo.GetMonthName(month);
 
             LbMONTH.Text = monthname + " " + year;
-
-            // Modify the first day of the month to start in exact day
+            //Modify the first day of the month to start in exact day
             DateTime firstDayOfMonth = new DateTime(year, month, 1);
             DayOfWeek dayOfWeek = firstDayOfMonth.DayOfWeek;
 
@@ -102,22 +102,15 @@ namespace Calendar
             int i = 1;
             int count = 0;
 
-            //days in previous month
             int daysLastMonth = DateTime.DaysInMonth(year, DateTime.Now.Month - 1);
-
-            //days in next month
             int daysNextMonth = DateTime.DaysInMonth(year, DateTime.Now.Month + 1);
-            //MessageBox.Show($"{daysNextMonth}");
 
-            //phase 1: the last day of previous month -> the first day of current month 
+            //Phase 1: Process the last day of last month and the first day of current day
             if (i < (int)dayOfWeek)
             {
-                //last days from previous months
                 int lastdaysPrevMonth = (int)dayOfWeek - daysLastMonth;
                 int datePrev = lastdaysPrevMonth * (-1);
-                //MessageBox.Show($"{datePrev}");
 
-                //adding previous month
                 for (int y = datePrev; y < daysLastMonth; y++)
                 {
                     UserControlDays ucdays = new UserControlDays();
@@ -128,7 +121,7 @@ namespace Calendar
                     count++;
                 }
             }
-            //phase 2: the ongoing day of current month -> the last day of current month
+            //Phase 2: Process the day of current month
             for (int k = 1; k <= days; k++)
             {
                 UserControlDays ucdays = new UserControlDays();
@@ -136,7 +129,7 @@ namespace Calendar
                 dayContainer.Controls.Add(ucdays);
                 count++;
             }
-            //phase 3: the last day of current month -> the first day of next month
+            //Phase 3: Process the last day of current month and the first day of next month
             for (int j = 1; j <= daysNextMonth; j++)
             {
                 UserControlDays ucdays = new UserControlDays();
@@ -145,24 +138,94 @@ namespace Calendar
                 dayContainer.Controls.Add(ucdays);
                 count++;
             }
-        }
 
+            ////////////////////////////////////////////////////////////////////////////////////
+            ////////set condition for lunar calendar//////
+            LunarCalendar cs = new LunarCalendar();
+
+            int lastDaysOfMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month - 1);
+            int daysToAddFromPreviousMonth = lastDaysOfMonth - (int)DateTime.Now.DayOfWeek;
+            //Phase 1
+            for (int j = 0; j < daysToAddFromPreviousMonth; j++)
+            {
+                int[] currentLunarDate = cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j + 1).Day,
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j + 1).Month,
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j + 1).Year, 7);
+
+                if (currentLunarDate[1] != cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j - 2).Day,
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j - 2).Month,
+                    DateTime.Now.AddDays(-daysToAddFromPreviousMonth + j - 2).Year, 7)[1])
+                {
+                    currentLunarDate[1]--;
+                }
+
+                count++;
+
+                UserControlDays ucdays = new UserControlDays();
+                ucdays.SetBackground(1);
+            }
+            //Phase 2
+            int daysInCurrentMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+
+            for (int j = 0; j < daysInCurrentMonth; j++)
+            {
+                int[] currentLunarDate = cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(j + 1).Day,
+                    DateTime.Now.AddDays(j + 1).Month,
+                    DateTime.Now.AddDays(j + 1).Year, 7);
+
+                if (currentLunarDate[1] != cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(j).Day,
+                    DateTime.Now.AddDays(j).Month,
+                    DateTime.Now.AddDays(j).Year, 7)[1])
+                {
+                    currentLunarDate[1]--;
+                }
+
+                count++;
+            }
+            //Phase 3
+            int daysToAddToNextMonth = (7 - count) % 7;
+
+            for (int j = 0; j < daysToAddToNextMonth; j++)
+            {
+                int[] currentLunarDate = cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(daysInCurrentMonth + j + 1).Day,
+                    DateTime.Now.AddDays(daysInCurrentMonth + j + 1).Month,
+                    DateTime.Now.AddDays(daysInCurrentMonth + j + 1).Year, 7);
+
+                if (currentLunarDate[1] != cs.convertSolar2Lunar(
+                    DateTime.Now.AddDays(daysInCurrentMonth + j).Day,
+                    DateTime.Now.AddDays(daysInCurrentMonth + j).Month,
+                    DateTime.Now.AddDays(daysInCurrentMonth + j).Year, 7)[1])
+                {
+                    currentLunarDate[1]--;
+                }
+
+                count++;
+
+                UserControlDays ucdays = new UserControlDays();
+                ucdays.SetBackground(1);
+            }
+
+            UpdateTheme();
+        }
         //change theme
         private void button4_Click(object sender, EventArgs e)
         {
-            //Open the ChangeThemeForm
             ChangeTheme changeThemeForm = new ChangeTheme();
             changeThemeForm.ShowDialog();
 
-            //Handle the result from the ChangeThemeForm if needed
             if (changeThemeForm.DialogResult == DialogResult.OK)
             {
-                //The user clicked "Save", update the theme based on the selected theme in ChangeThemeForm
                 currentTheme = changeThemeForm.SelectedTheme;
+                userSelectedTheme = true;
                 UpdateTheme();
+                userSelectedTheme = false;
             }
         }
-
         //property to get or set the current theme
         public ThemeEnum ThemeEnum
         {
@@ -173,17 +236,17 @@ namespace Calendar
             set
             {
                 currentTheme = value;
-                UpdateTheme(); //call method to update the theme
+                UpdateTheme();
             }
         }
-        //add method to update theme
+
         private void UpdateTheme()
         {
             //implement logic to update the theme based on currentTheme
             switch (currentTheme)
             {
                 case ThemeEnum.WildAnimal:
-                    this.BackgroundImage = Properties.Resources.bird; 
+                    this.BackgroundImage = Properties.Resources.bird;
                     break;
                 case ThemeEnum.Forest:
                     this.BackgroundImage = Properties.Resources.forest;
@@ -192,7 +255,81 @@ namespace Calendar
                     this.BackgroundImage = Properties.Resources.ocean;
                     break;
             }
+            //implement condition to update theme based on month and allow users change theme like they want
+            if (!userSelectedTheme)
+            {
+                int selectedMonth = static_month;
+
+                switch (selectedMonth)
+                {
+                    case int month when (month >= 1 && month <= 3):
+                        this.BackgroundImage = Properties.Resources.spring;
+                        break;
+                    case int month when (month >= 4 && month <= 6):
+                        this.BackgroundImage = Properties.Resources.summer;
+                        break;
+                    case int month when (month >= 7 && month <= 9):
+                        this.BackgroundImage = Properties.Resources.fall;
+                        break;
+                    case int month when (month >= 10 && month <= 12):
+                        this.BackgroundImage = Properties.Resources.winter;
+                        break;
+                }
+            }
         }
-        
+
+        private void btnToday_Click(object sender, EventArgs e)
+        {
+            display_all(2);
+            //display the calendar for the current month and year
+            DisplayCalendar(DateTime.Now.Month, DateTime.Now.Year);
+        }
+
+        //display the calendar for a specific month and year
+        private void DisplayCalendar(int month, int year)
+        {
+            HighlightTodayBlock();
+        }
+
+        private void HighlightTodayBlock()
+        {
+            DateTime today = DateTime.Today;
+
+            foreach (Control control in dayContainer.Controls)
+            {
+                if (control is UserControlDays)
+                {
+                    UserControlDays userControlDay = (UserControlDays)control;
+
+                    string dayString = userControlDay.lbDays.Text.Trim();
+
+                    int month = static_month;
+                    int year = static_year;
+
+                    if (dayString == today.Day.ToString() && month == today.Month && year == today.Year)
+                    {
+                        userControlDay.SetBackgroundForToday();
+                    }
+                    else
+                    {
+                        //userControlDay.SetBackground(2);
+                    }
+                }
+            }
+        }
+
+        public void AddEvent(string date, string eventName)
+        {
+            // Pass the event handling to the EventForm
+            using (EventForm eventForm = new EventForm())
+            {
+                eventForm.AddEvent(date, eventName);
+            }
+        }
+
+        public string GetEvent(string date)
+        {
+            return null;
+        }
     }
 }

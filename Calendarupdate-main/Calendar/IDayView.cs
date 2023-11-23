@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Calendar
 {
-    public interface IDayView
+    public interface IEventContainer
     {
-        void DisplayEvent();
+        void AddEvent(string date, string eventName);
+        string GetEvent(string date);
     }
+
 }

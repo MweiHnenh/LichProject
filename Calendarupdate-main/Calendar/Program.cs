@@ -16,7 +16,7 @@ namespace Calendar
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form2());//System.ArgumentException: Option not support. Parameter name:ss1 mode
+            Application.Run(new Form2());
         }
     }
 }

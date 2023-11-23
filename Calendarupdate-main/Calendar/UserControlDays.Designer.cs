@@ -92,7 +92,7 @@ namespace Calendar
 
         #endregion
 
-        private System.Windows.Forms.Label lbDays;
+        public System.Windows.Forms.Label lbDays;
         private System.Windows.Forms.Label lbEvent;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label LunarDate;

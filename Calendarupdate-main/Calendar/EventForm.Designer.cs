@@ -30,31 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventForm));
-            this.textDate = new System.Windows.Forms.TextBox();
-            this.textEvent = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonSave = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textEvent = new System.Windows.Forms.TextBox();
+            this.textDate = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // textDate
-            // 
-            this.textDate.Enabled = false;
-            this.textDate.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textDate.Location = new System.Drawing.Point(31, 64);
-            this.textDate.Name = "textDate";
-            this.textDate.Size = new System.Drawing.Size(299, 29);
-            this.textDate.TabIndex = 0;
-            // 
-            // textEvent
-            // 
-            this.textEvent.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textEvent.Location = new System.Drawing.Point(31, 143);
-            this.textEvent.Name = "textEvent";
-            this.textEvent.Size = new System.Drawing.Size(299, 29);
-            this.textEvent.TabIndex = 1;
-            this.textEvent.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label1
             // 
@@ -86,6 +68,25 @@
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
+            // textEvent
+            // 
+            this.textEvent.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textEvent.Location = new System.Drawing.Point(31, 143);
+            this.textEvent.Name = "textEvent";
+            this.textEvent.Size = new System.Drawing.Size(299, 29);
+            this.textEvent.TabIndex = 1;
+            this.textEvent.TextChanged += new System.EventHandler(this.textEvent_TextChanged);
+            // 
+            // textDate
+            // 
+            this.textDate.Enabled = false;
+            this.textDate.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textDate.Location = new System.Drawing.Point(31, 64);
+            this.textDate.Name = "textDate";
+            this.textDate.Size = new System.Drawing.Size(299, 29);
+            this.textDate.TabIndex = 0;
+            this.textDate.TextChanged += new System.EventHandler(this.textDate_TextChanged);
+            // 
             // EventForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -108,12 +109,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox textDate;
-        private System.Windows.Forms.TextBox textEvent;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox textEvent;
+        private System.Windows.Forms.TextBox textDate;
     }
 }

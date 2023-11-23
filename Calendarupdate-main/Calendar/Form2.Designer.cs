@@ -29,6 +29,7 @@ namespace Calendar
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -43,6 +44,10 @@ namespace Calendar
             this.dayContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.btnToday = new System.Windows.Forms.Button();
+            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tableBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.tableBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -192,11 +197,32 @@ namespace Calendar
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // btnToday
+            // 
+            this.btnToday.Location = new System.Drawing.Point(117, 12);
+            this.btnToday.Name = "btnToday";
+            this.btnToday.Size = new System.Drawing.Size(75, 23);
+            this.btnToday.TabIndex = 16;
+            this.btnToday.Text = "Today";
+            this.btnToday.UseVisualStyleBackColor = true;
+            this.btnToday.Click += new System.EventHandler(this.btnToday_Click);
+            // 
+            // id
+            // 
+            this.id.HeaderText = "Number";
+            this.id.Name = "id";
+            // 
+            // tableBindingSource
+            // 
+            this.tableBindingSource.DataMember = "Table";
+            // 
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(889, 647);
+            this.Controls.Add(this.btnToday);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.LbMONTH);
@@ -218,6 +244,7 @@ namespace Calendar
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.tableBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,6 +264,9 @@ namespace Calendar
         private System.Windows.Forms.FlowLayoutPanel dayContainer;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button btnToday;
+        private System.Windows.Forms.DataGridViewTextBoxColumn id;
+        private System.Windows.Forms.BindingSource tableBindingSource;
     }
 }
 
