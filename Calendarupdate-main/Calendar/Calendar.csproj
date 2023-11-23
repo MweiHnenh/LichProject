@@ -119,7 +119,6 @@
     <Compile Include="ChangeTheme.Designer.cs">
       <DependentUpon>ChangeTheme.cs</DependentUpon>
     </Compile>
-    <Compile Include="EventFileHandler.cs" />
     <Compile Include="EventForm.cs">
       <SubType>Form</SubType>
     </Compile>

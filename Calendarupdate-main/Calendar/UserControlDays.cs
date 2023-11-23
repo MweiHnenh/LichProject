@@ -1,20 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 
 namespace Calendar
 {
     public partial class UserControlDays : UserControl
     {
-        private IEventContainer eventContainer;
         public static string static_day;
         public event EventHandler DayClicked;
-
-        public void SetEventContainer(IEventContainer container)
-        {
-            eventContainer = container;
-        }
 
         public UserControlDays()
         {
@@ -25,6 +19,7 @@ namespace Calendar
         {
 
         }
+
         public void SetBackground(int hidden)
         {
             if (hidden == 1)
@@ -51,14 +46,30 @@ namespace Calendar
 
         private void UserControlDays_Click(object sender, EventArgs e)
         {
-            // Check if an event exists for the selected date
             string selectedDate = $"{Form2.static_year}/{Form2.static_month}/{static_day}";
-            string eventDescription = EventFileHandler.LoadEvent(selectedDate);
+            EventForm eventForm = new EventForm(selectedDate);
+            eventForm.ShowDialog();
+        }
 
-            if (!string.IsNullOrEmpty(eventDescription))
+        private string LoadEvent(string date)
+        {
+            string filePath = Path.Combine("Events", $"{date}.txt");
+
+            try
             {
-                MessageBox.Show($"Event on {selectedDate}: {eventDescription}");
+                if (File.Exists(filePath))
+                {
+                    using (StreamReader sr = new StreamReader(filePath))
+                    {
+                        return sr.ReadToEnd();
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading event: {ex.Message}");
+            }
+            return string.Empty;
         }
 
         public void DisplayEvent()
@@ -86,13 +97,11 @@ namespace Calendar
         {
 
         }
-        public static void SaveEvent(string eventDescription)
-        {
 
-        }
-        public static string LoadEvent()
+        public string GetEvent()
         {
-            return ""; 
+            string selectedDate = $"{Form2.static_year}/{Form2.static_month}/{static_day}";
+            return LoadEvent(selectedDate);
         }
     }
 }

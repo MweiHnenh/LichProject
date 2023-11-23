@@ -12,7 +12,7 @@ namespace Calendar
         Ocean = 3
     }
 
-    public partial class Form2 : Form, IEventContainer
+    public partial class Form2 : Form
     {
         int month, year;
         public static int static_month, static_year;
@@ -316,20 +316,6 @@ namespace Calendar
                     }
                 }
             }
-        }
-
-        public void AddEvent(string date, string eventName)
-        {
-            // Pass the event handling to the EventForm
-            using (EventForm eventForm = new EventForm())
-            {
-                eventForm.AddEvent(date, eventName);
-            }
-        }
-
-        public string GetEvent(string date)
-        {
-            return null;
         }
     }
 }

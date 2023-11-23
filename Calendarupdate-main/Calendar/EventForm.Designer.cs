@@ -1,4 +1,6 @@
-﻿namespace Calendar
+﻿using System;
+
+namespace Calendar
 {
     partial class EventForm
     {
@@ -102,7 +104,6 @@
             this.Name = "EventForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EventForm";
-            this.Load += new System.EventHandler(this.EventForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
